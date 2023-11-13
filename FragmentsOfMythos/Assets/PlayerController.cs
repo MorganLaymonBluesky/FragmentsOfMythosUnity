@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 1f;
     public float collisionOffset = 0.05f;
     public ContactFilter2D movementFilter;
+    public bool canMove = true;
+    public MeleeAttack meleeAttack;
 
     Vector2 movementInput;
     SpriteRenderer spriteRenderer;
@@ -26,35 +28,40 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // If movement input is not 0, try to move.
-        if (movementInput != Vector2.zero)
+        if (canMove == true)
         {
-            bool success = TryMove(movementInput);
-
-            if (!success)
+            // If movement input is not 0, try to move.
+            if (movementInput != Vector2.zero)
             {
-                success = TryMove(new Vector2(movementInput.x, 0));
+                bool success = TryMove(movementInput);
 
                 if (!success)
                 {
-                    success = TryMove(new Vector2(0, movementInput.y));
-                }
-            }
-            animator.SetBool("isMoving", success);
-        }
-        else
-        {
-            animator.SetBool("isMoving", false);
-        }
+                    success = TryMove(new Vector2(movementInput.x, 0));
 
-        // Set direction of sprite to movement direction
-        if (movementInput.x < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
-        else if (movementInput.x > 0)
-        {
-            spriteRenderer.flipX = false;
+                    if (!success)
+                    {
+                        success = TryMove(new Vector2(0, movementInput.y));
+                    }
+                }
+                animator.SetBool("isMoving", success);
+            }
+            else
+            {
+                animator.SetBool("isMoving", false);
+            }
+
+            // Set direction of sprite to movement direction
+            if (movementInput.x < 0)
+            {
+                spriteRenderer.flipX = true;
+                
+            }
+            else if (movementInput.x > 0)
+            {
+                spriteRenderer.flipX = false;
+                
+            }
         }
     }
 
@@ -86,8 +93,36 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnMove(InputValue movementValue)
+    void OnMove(InputValue movementValue)
     {
         movementInput = movementValue.Get<Vector2>();
+    }
+
+    void OnFire() // When Left Mouse Button is Clicked
+    {
+        animator.SetTrigger("swordAttack");
+    }
+
+    public void MeleeAttack()
+    {
+        SlowMovement();
+        if (spriteRenderer.flipX == true)
+        {
+            meleeAttack.AttackLeft();
+        }
+        else
+        {
+            meleeAttack.AttackRight();
+        }
+    }
+
+    public void SlowMovement()
+    {
+        moveSpeed = moveSpeed / 2;
+    }
+
+    public void FreeMovement()
+    {
+        moveSpeed = 1f;
     }
 }
