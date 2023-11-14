@@ -116,6 +116,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void EndMeleeAttack()
+    {
+        FreeMovement();
+        meleeAttack.StopAttack();
+    }
+
     public void SlowMovement()
     {
         moveSpeed = moveSpeed / 2;

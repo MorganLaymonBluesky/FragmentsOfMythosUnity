@@ -4,26 +4,25 @@ using UnityEngine;
 
 public class MeleeAttack : MonoBehaviour
 {
-
-    Collider2D meleeCollider;
+    public Collider2D meleeCollider;
+    public float damage = 3;
     Vector2 rightAttackOffset;
 
     private void Start()
     {
-        meleeCollider.GetComponent<Collider2D>();
-        rightAttackOffset = transform.position;
+        rightAttackOffset = transform.localPosition;
     }
 
     public void AttackRight()
     {
         meleeCollider.enabled = true;
-        transform.position = rightAttackOffset;
+        transform.localPosition = rightAttackOffset;
     }
 
     public void AttackLeft()
     {
         meleeCollider.enabled = true;
-        transform.position = new Vector3(rightAttackOffset.x * -1, rightAttackOffset.y);
+        transform.localPosition = new Vector3(rightAttackOffset.x * -1, rightAttackOffset.y);
     }
 
     public void StopAttack()
@@ -36,6 +35,12 @@ public class MeleeAttack : MonoBehaviour
         if (collision.tag == "Enemy")
         {
             // Deal Damage to Enemy
+            Slime slime = collision.GetComponent<Slime>();
+
+            if (slime != null)
+            {
+                slime.Health -= damage;
+            }
         }
     }
 }
